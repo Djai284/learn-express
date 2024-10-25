@@ -41,6 +41,20 @@ const addMsgToRequest = (req: UserRequest, res: Response, next: NextFunction) =>
 
 app.use(cors({ origin: 'http://localhost:3000' }));
 app.use('/read/usernames', addMsgToRequest);
+app.use('/read/username/:name', addMsgToRequest);  // Add middleware for new endpoint
+
+app.get('/read/username/:name', (req: UserRequest, res: Response) => {
+  const username = req.params.name;
+  const user = req.users?.find(user => user.username === username);
+  
+  if (user) {
+    res.json({ email: user.email });
+  } else {
+    res.status(404).json({
+      error: { message: 'User not found', status: 404 }
+    });
+  }
+});
 
 app.get('/read/usernames', (req: UserRequest, res: Response) => {
   let usernames = req.users?.map((user) => {
